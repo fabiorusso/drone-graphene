@@ -1,0 +1,10 @@
+/*.classpath
+/.settings/
+/target/
+/.idea/
+/*.iml
+/.project
+/bin/
+/deployments/
+/*.aird
+*.checkstyle

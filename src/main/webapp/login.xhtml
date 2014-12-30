@@ -10,7 +10,7 @@
 	<h:form id="loginForm" prependIds="false">
 		<h:panelGrid columns="2">
 			<h:outputLabel for="userName">Username:</h:outputLabel>
-			<h:inputText id="userName" value="#{credentials.username}" />
+			<h:inputText id="userName" value="#{credentials.username}" required="true" />
 			<h:outputLabel for="password">Password:</h:outputLabel>
 			<h:inputSecret id="password" value="#{credentials.password}" />
 			<h:commandButton id="login" value="Log in"
