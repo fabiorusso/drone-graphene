@@ -5,6 +5,9 @@
 	http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 	<extension qualifier="webdriver">
 		<property name="browser">${browser}</property>
+		<property name="loggingPrefs">driver=INFO,profiler=WARNING</property>
+		<property name="acceptSslCerts">false</property>
+		<property name="webStorageEnabled">false</property>
 	</extension>
 	<container qualifier="wildfly" default="true">
 		<configuration>

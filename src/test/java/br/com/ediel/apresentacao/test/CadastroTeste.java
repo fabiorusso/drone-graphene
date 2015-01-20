@@ -1,16 +1,13 @@
 package br.com.ediel.apresentacao.test;
 
 import static org.jboss.arquillian.graphene.Graphene.guardHttp;
-import static org.jboss.arquillian.graphene.Graphene.waitAjax;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.graphene.findby.FindByJQuery;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Filters;
@@ -26,14 +23,17 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.FindBy;
 
+import br.com.ediel.apresentacao.impl.CadastroController;
 import br.com.ediel.apresentacao.impl.LoginController;
+import br.com.ediel.apresentacao.model.Cliente;
+import br.com.ediel.apresentacao.model.ClienteDAO;
+import br.com.ediel.apresentacao.model.ClienteDAOJPA;
 import br.com.ediel.apresentacao.model.Credentials;
-import br.com.ediel.apresentacao.model.User;
 
 @RunWith(Arquillian.class)
-public class GraphicTest {
+public class CadastroTeste {
 
-	private static final Logger logger = Logger.getLogger("GraphicTest");
+	private static final Logger logger = Logger.getLogger("CadastroTeste");
 
 	private static final String WEBAPP_SRC = "src/main/webapp";
 
@@ -41,8 +41,9 @@ public class GraphicTest {
 	public static WebArchive createDeployment() {
 		return ShrinkWrap
 				.create(WebArchive.class, "exemplo.war")
-				.addClasses(Credentials.class, User.class,
-						LoginController.class)
+				.addClasses(Credentials.class, LoginController.class,
+						Cliente.class, CadastroController.class,
+						ClienteDAO.class, ClienteDAOJPA.class)
 				.merge(ShrinkWrap.create(GenericArchive.class)
 						.as(ExplodedImporter.class).importDirectory(WEBAPP_SRC)
 						.as(GenericArchive.class), "/",
@@ -58,60 +59,65 @@ public class GraphicTest {
 
 	// Injeta o Web Driver
 	@Drone
-	//private WebDriver browser;
+	// private WebDriver browser;
 	private FirefoxDriver browser;
 
 	// Injeta a URL da aplicação
 	@ArquillianResource
 	private URL deploymentUrl;
 
+	@FindBy(id = "form:cpf")
+	private WebElement cpf;
+
 	// Injeta o elemento que referencia o inputtext userName
-	@FindBy(id = "loginForm:userName")
+	@FindBy(id = "form:userName")
 	private WebElement userName;
 
-	@FindBy(id = "loginForm:password")
+	@FindBy(id = "form:password")
 	private WebElement password;
 
-	@FindBy(id = "loginForm:login")
-	private WebElement loginButton;
+	@FindBy(id = "form:nome")
+	private WebElement nome;
+
+	@FindBy(id = "form:endereco")
+	private WebElement endereco;
+
+	@FindBy(id = "form:cadastrarButton")
+	private WebElement cadastroButton;
 
 	// Injeta o primeiro elemento que possui a tag "li"
 	@FindBy(tagName = "li")
 	private WebElement facesMessage;
 
-	@FindBy(css = "input[type=submit]")
-	private WebElement whoAmI;
-
-	// Injeta um elemento usando jQuery selector
-	@FindByJQuery("p:visible")
-	private WebElement signedAs;
-
+	/**
+	     * 
+	     */
 	@Test
-	public void loginTeste() {
+	public void cadastroCliente() {
+
+		final String nomeCliente = "Fabio Russo";
+		final String asset = "Cliente " + nomeCliente + " Cadastrado!";
 
 		// Abre a página de teste
-		logger.info("Open URL:" + deploymentUrl.toExternalForm() + "login.jsf");
-		browser.get(deploymentUrl.toExternalForm() + "login.jsf");
+		browser.get(deploymentUrl.toExternalForm() + "cadastro.jsf");
 
 		logger.info("Title" + browser.getTitle());
 		logger.info("Page Source" + browser.getPageSource());
 		logger.info("Window Handle" + browser.getWindowHandle());
-		
-		userName.sendKeys("demo");
-		password.sendKeys("demo");
+
+		cpf.sendKeys("29729296839");
+		nome.sendKeys(nomeCliente);
+		userName.sendKeys("frusso");
+		password.sendKeys("fodase");
 
 		// Sincroniza a requisição da página
-		guardHttp(loginButton).click();
+		guardHttp(cadastroButton).click();
 
-		assertEquals("Welcome", facesMessage.getText().trim());
+		assertEquals(asset, facesMessage.getText().trim());
+	}
 
-		whoAmI.click();
-
-		// Sincroniza a requisição AJAX
-		waitAjax().until().element(signedAs).is().present();
-
-		assertTrue(signedAs.getText().contains("demo"));
-
+	@Test
+	public void test() {
 	}
 
 }

@@ -17,6 +17,10 @@ public class User implements Serializable {
 
 	private String nome;
 	
+	private String cpf;
+	
+	private String endereco;
+	
 	private String username;
 	
 	public User() {
